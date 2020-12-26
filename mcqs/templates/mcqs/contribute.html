@@ -1,0 +1,174 @@
+{% extends 'mcqs/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} Hydrogen - Contribute {% endblock %}
+
+{% block content %}
+
+<style>
+    
+    .submission-form {
+        margin-bottom: -10px;
+    }
+
+    .end-div {
+
+        display: grid;
+
+        grid-template-areas: "button submission-text";
+
+        align-items: center;
+
+    }
+
+    .submit-button {
+
+        grid-area: button;
+
+    }
+
+    .submit-text {
+
+        opacity: 0;
+
+        border: solid;
+        border-color: green;
+        border-width: 2px;
+
+        background-color:lightgreen;
+
+        grid-area: submission-text;
+
+        padding: 10px;
+
+        margin: 15px;
+    }
+
+    .field_div {
+
+        margin-bottom: 15px;
+
+    }
+
+    @media (max-width: 991.98px) { 
+
+        .form-control {
+
+            padding: 20px;
+
+            font-size: 36px;
+
+            border-radius: 15px;
+
+        }
+
+        .end-div {
+
+            display: block;
+            width: 100%;
+
+        }
+
+        .submit-text {
+
+            display: none;
+
+        }
+
+        .submit-button {
+
+            width: 100%;
+            padding: 45px;
+
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+        }
+
+    }
+
+</style>
+
+<script>
+
+function setCookie (name, value, days) {
+
+    var date = new Date ();
+    date.setTime (date.getTime () + (days * 20 * 60 * 60 * 100));
+    var expires = "expires=" + date.toUTCString ();
+    document.cookie = name + "=" + value + ';' + expires + ";path=/";
+
+}
+
+function getCookie (name) {
+
+    var name = name + "=";
+    var cookies = document.cookie.split (';');
+
+    for (let i = 0; i < cookies.length; i++) {
+
+        let cookie = cookies [i];
+
+        while (cookie.charAt (0) == ' ') {
+            cookie = cookie.substring (1);
+        }
+
+        if (cookie.indexOf (name) == 0) {
+            return cookie.substring (name.length, cookie.length);
+        }
+    }
+}
+
+function onLoadEvents () {
+
+    var contributed = '{{ contributed }}';
+
+    if (parseInt (contributed) == 1) {
+
+        setCookie ('contributed', '0', 1);
+
+        let submit_message = document.getElementById ('submit_message');
+
+        submit_message.style.display = 'block';
+        submit_message.style.opacity = '1';
+
+        submit_message.scrollIntoView ();
+
+        setTimeout (function () {
+            submit_message.style.opacity = '0';
+            if (screen.width <= 991.98) { submit_message.style.display = 'none'; }
+        }, 7 * 1000);
+
+    }
+
+    return 1;
+}
+
+</script>
+
+<body onload="onLoadEvents ()"></body>
+
+<div class="content-div">
+    <form class="submission-form" action="/contribute/" method="post">
+
+        {% csrf_token %}
+
+        <div class="field_div">{{ form.username|as_crispy_field }}</div>
+        <div class="field_div">{{ form.subject|as_crispy_field }}</div>
+        <div class="field_div">{{ form.question|as_crispy_field }}</div>
+        <div class="field_div">{{ form.choice_1|as_crispy_field }}</div>
+        <div class="field_div">{{ form.choice_2|as_crispy_field }}</div>
+        <div class="field_div">{{ form.choice_3|as_crispy_field }}</div>
+        <div class="field_div">{{ form.choice_4|as_crispy_field }}</div>
+        <div class="field_div">{{ form.answer|as_crispy_field }}</div>
+
+        <div class="end-div">
+            <button class="btn btn-primary submit-button" type="submit">Submit Question</button>
+            <div id="submit_message" class="submit-text">The question has successfully been submitted, it will appear on the website shortly.</div>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
